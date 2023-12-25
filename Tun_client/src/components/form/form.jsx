@@ -70,7 +70,10 @@ const AccountCreationForm = ({ formData, handleInputChange, handleSubmit, error 
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     />
                 </div>
-                {error && <p className="text-red-500 text-xs italic">{error}</p>}
+                {error && Object.values(error).map((msg, index) => (
+                    <p key={index} className="text-red-500 text-xs italic">{msg}</p>
+                ))}
+
                 <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     Create Account
                 </button>

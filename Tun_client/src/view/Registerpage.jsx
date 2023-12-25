@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
-import AccountCreationForm from '../components/form/form'; // Update the path accordingly
+import LoginForm from '../components/form/LoginForm';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-export default function Registerpage() {
+export default function Loginpage() {
     const [formData, setFormData] = useState({
-        first_name: '',
-        last_name: '',
         email: '',
         password: '',
-        confirmPassword: ''
     });
-    
     const [error, setError] = useState('');
     const navigate = useNavigate();
-
+    
     const handleInputChange = (e) => {
         setFormData({
             ...formData,
@@ -22,28 +18,22 @@ export default function Registerpage() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (formData.password !== formData.confirmPassword) {
-            setError('Passwords do not match.');
-            return;
+        try {
+            const response = await axios.post('http://localhost:5000/login', formData);
+            console.log(response);
+            navigate('/welcome');  // Change to the appropriate route on successful login
+        } catch (err) {
+            if (err.response) {
+                setError(err.response.data.message);  // Adjust the error handling based on the response structure
+            }
         }
-
-        axios.post("http://localhost:5000/create/user", formData)
-            .then((res) => {
-                console.log(res);
-                navigate('/Home');
-            })
-            .catch(err => {
-                if (err.response) {
-                    setError(err.response.data.errors);
-                }
-            });
     };
 
     return (
-        <AccountCreationForm 
-            formData={formData} 
+        <LoginForm
+            formData={formData}
             handleInputChange={handleInputChange}
             handleSubmit={handleSubmit}
             error={error}
