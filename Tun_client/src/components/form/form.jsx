@@ -3,6 +3,14 @@ import React from 'react';
 const AccountCreationForm = ({ formData, handleInputChange, handleSubmit, error }) => {
     return (
         <div className="min-h-screen bg-gray-800 flex items-center justify-center">
+            {error && (
+            <div className="text-red-500">
+                <p className="font-bold">Errors:</p>
+                <ul className="list-disc list-inside">
+                    <li className="text-s italic">{Object.values(error).join(' ')}</li>
+                </ul>
+            </div>
+        )}
             <form onSubmit={handleSubmit} className="bg-gray-700 p-12 w-2/5  rounded-lg shadow-lg">
                 <h2 className="text-white text-2xl mb-4">Create Account</h2>
                 <div className="mb-4">
@@ -70,9 +78,6 @@ const AccountCreationForm = ({ formData, handleInputChange, handleSubmit, error 
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     />
                 </div>
-                {error && Object.values(error).map((msg, index) => (
-                    <p key={index} className="text-red-500 text-xs italic">{msg}</p>
-                ))}
 
                 <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     Create Account

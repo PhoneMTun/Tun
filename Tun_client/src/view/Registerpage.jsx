@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
-import LoginForm from '../components/form/LoginForm';
+import AccountCreationForm from '../components/form/form'; // Update the path accordingly
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-export default function Loginpage() {
+export default function Registerpage() {
     const [formData, setFormData] = useState({
+        first_name: '',
+        last_name: '',
         email: '',
         password: '',
+        confirmPassword: ''
     });
+    
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    
+    // const [successful, setSuccessful] = useState(false);
+
     const handleInputChange = (e) => {
         setFormData({
             ...formData,
@@ -18,25 +23,35 @@ export default function Loginpage() {
         });
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        try {
-            const response = await axios.post('http://localhost:5000/login', formData);
-            console.log(response);
-            navigate('/welcome');  // Change to the appropriate route on successful login
-        } catch (err) {
-            if (err.response) {
-                setError(err.response.data.message);  // Adjust the error handling based on the response structure
-            }
+        if (formData.password !== formData.confirmPassword) {
+            setError('Passwords do not match.');
+            return;
         }
+
+        axios.post("http://localhost:5000/create/user", formData)
+            .then((res) => {
+                console.log(res);
+                // setSuccessfull(true);
+                navigate('/', { state: { successful: true } });
+            })
+            .catch(err => {
+                if (err.response) {
+                    setError(err.response.data.errors);
+                }
+            });
     };
 
     return (
-        <LoginForm
-            formData={formData}
-            handleInputChange={handleInputChange}
-            handleSubmit={handleSubmit}
-            error={error}
-        />
+        <div>
+        
+            <AccountCreationForm 
+                formData={formData} 
+                handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit}
+                error={error}
+            />
+        </div>
     );
 }

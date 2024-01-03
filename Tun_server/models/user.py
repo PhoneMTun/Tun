@@ -8,6 +8,7 @@ class User:
         self.id = data['id']
         self.first_name = data['first_name']
         self.last_name = data['last_name']
+        self.role = data['role']
         self.email = data['email']
         self.password = data['password']
         self.created_at = data['created_at']
@@ -15,7 +16,7 @@ class User:
 
     @classmethod
     def save(cls,data):
-        query = "insert into users (first_name, last_name, email, password) values(%(first_name)s, %(last_name)s,%(email)s, %(password)s);"
+        query = "insert into users (first_name, last_name, role, email, password) values(%(first_name)s, %(last_name)s,%(email)s,%(role)s, %(password)s);"
         results= connectToMySQL(DB).query_db(query,data)
         return results
     
@@ -27,7 +28,8 @@ class User:
                 SET 
                     first_name = %(first_name)s, 
                     last_name = %(last_name)s, 
-                    email = %(email)s, 
+                    email = %(email)s,
+                    role = %(role)s,
                     password = %(password)s
                 WHERE id = %(id)s;
             """
@@ -48,21 +50,24 @@ class User:
         return users
     
     
-    @classmethod
-    def email_exists(cls, email):
-        query = "SELECT * FROM users WHERE email = %(email)s;"
-        data = {'email': email}
-        results = connectToMySQL(DB).query_db(query, data)
-        return results
+    # @classmethod
+    # def email_exists(cls, email):
+    #     query = "SELECT * FROM users WHERE email = %(email)s;"
+    #     data = {'email': email}
+    #     results = connectToMySQL(DB).query_db(query, data)
+    #     return results
     
     @classmethod
-    def get_by_email(cls,data):
-        query="""Select * from users where email = %(email)s;"""
-        results= connectToMySQL(DB).query_db(query,data)
+    def get_by_email(cls,email):
+        query = "SELECT * FROM users WHERE email = %(email)s"
+        print ("here>>>" + email)
+        data = {'email': email}
+        results = connectToMySQL(DB).query_db(query, data)
         print(results)
-        if len(results) <1:
-            return False
         return cls(results[0])
+
+
+
     
     @classmethod
     def get_by_id(cls, id):

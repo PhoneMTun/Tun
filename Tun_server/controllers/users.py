@@ -1,7 +1,10 @@
 from Tun_server.models.user import User
 from Tun_server import app
-from flask import  jsonify, request, session
+from flask import  jsonify, request
 from flask_bcrypt import Bcrypt 
+import jwt
+from datetime import datetime, timedelta
+secret_key = 'SHHHHH'
 
 
 bcrypt = Bcrypt(app)
@@ -84,18 +87,73 @@ def get_user_by_id(user_id):
 
 @app.route('/login', methods=['POST'])
 def login():
-    user = User.get_by_email(request.form['email'])   
+    data = request.json
+    print(data)
+    user = User.get_by_email(data['email'])   
     if not user:
-        flash("Invalid Email", "login")
-        return redirect('/login')  # Redirect to login page on error
+        return jsonify({"message": "User not found"}), 404
     
-    if not bcrypt.check_password_hash(user.password, request.form['password']):
-        flash("Invalid Password", "login")
-        return redirect('/login')  # Redirect to login page on error
+    if not bcrypt.check_password_hash(user.password, data['password']):
+        return jsonify({"message": "Password incorrect"}), 401  
     
-    session['user_id'] = user.id
-    session['first_name'] = user.first_name
-    
-    return redirect('/welcome')
-                       
+    token_payload = {
+        'user_id': user.id,
+        'exp': datetime.utcnow() + timedelta(days=1)  # Token expiration time
+    }
+    secret_key = 'SHHHHH'  
+    token = jwt.encode(token_payload, secret_key, algorithm='HS256')
+
+    return jsonify({"message": "Log in successful", "token": token}), 200
+
+from flask import request
+
+@app.route('/protected', methods=['GET'])
+def protected_route():
+    # Get the token from the request headers
+    token = request.headers.get('Authorization')
+
+    try:
+        # Decode and verify the token
+        decoded_token = jwt.decode(token, secret_key, algorithms=['HS256'])
+        user_id = decoded_token['user_id']
+
+        # Your protected route logic here
+
+        return jsonify({"message": "Protected route accessed", "user_id": user_id})
+    except jwt.ExpiredSignatureError:
+        return jsonify({"message": "Token has expired"})
+    except jwt.InvalidTokenError:
+        return jsonify({"message": "Invalid token"})
+
+
+# @app.route('/login', methods=['POST'])
+# def login():
+#     # Get user input from request JSON
+#     data = request.json
+
+#     # Check if 'email' and 'password' are present in the request data
+#     # if 'email' not in data or 'password' not in data:
+#     #     return jsonify({"message": "Invalid request data"}), 400
+
+#     # Retrieve the user based on the provided email
+#     user = User.get_by_email(data['email'])
+#     print(user)
+
+#     # Check if the user exists
+#     if user is None:
+#         return jsonify({"message": "User not found"}), 404
+
+#     # Check if the provided password is correct
+#     if not bcrypt.check_password_hash(user.password, data['password']):
+#         return jsonify({"message": "Password incorrect"}), 401
+
+#     # Generate JWT token
+#     token_payload = {
+#         'user_id': user.id,
+#         'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1)  # Token expiration time
+#     }
+#     jwt_token = jwt.encode(token_payload, app.config['SECRET_KEY'], algorithm='HS256')
+
+#     # Return JWT token in the response
+#     return jsonify({"message": "Log in successful", "token": jwt_token.decode('utf-8')}), 200
 
