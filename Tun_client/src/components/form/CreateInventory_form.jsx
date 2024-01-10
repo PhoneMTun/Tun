@@ -1,8 +1,15 @@
 import React, {useState, useEffect} from 'react'
+import {useLocation} from 'react-router-dom'
 import axios from 'axios'
+import SimilarSKU from '../navigators/SimilarSKU'
 
-export default function CreateInventory_form({formData, handleChange , handleSubmit, validationErrors  , uploadedImages, setUploadedImages}) {
+export default function CreateInventory_form({formData, handleChange , handleSubmit, validationErrors  , inventory}) {
     const [warehouses, setWearehouses] = useState([])
+    const location = useLocation();
+    // console.log(location.pathname)
+    // console.log(formData)
+    console.log(validationErrors)
+    console.log(inventory)
     
     useEffect(() => {
         const fetchWarehouses = async () => {
@@ -19,11 +26,13 @@ export default function CreateInventory_form({formData, handleChange , handleSub
         // console.log(warehouses);
 
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-lg w-full bg-white p-8 rounded-lg shadow-lg">
-            
-                <h2 className="text-2xl font-semibold text-gray-800 mb-6">Create New Inventory Item</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">   
+        <div className="min-h-screen bg-gray-100 flex items-center justify-center w-full px-4 ml-5">
+            <div className="w-full max-w-lg bg-white p-8 rounded-lg shadow-lg mb-6">
+                {location.pathname=='/home/inventory/create-inventory'?
+                <h2 className="text-2xl font-semibold text-gray-800 mb-6">Create New Inventory Item</h2>:
+                <h2 className="text-2xl font-semibold text-gray-800 mb-6">{`Update ${formData.sku}`}</h2>
+                }
+                <form onSubmit={handleSubmit} className="space-y-6 ">   
                     <div>
                         <label htmlFor="name" className="block text-gray-700 font-medium mb-2">Item Name
                         {validationErrors.name && <span className="text-red-500 ml-2">{validationErrors.name}</span>}
@@ -40,7 +49,7 @@ export default function CreateInventory_form({formData, handleChange , handleSub
                     </div>
                     <div>
                         <label htmlFor="name" className="block text-gray-700 font-medium mb-2">Image
-                        {validationErrors.name && <span className="text-red-500 ml-2">{validationErrors.image_url}</span>}
+                        {validationErrors.image_url && <span className="text-red-500 ml-2">{validationErrors.image_url}</span>}
                         </label>
                         <input
                         type="file"
@@ -53,10 +62,19 @@ export default function CreateInventory_form({formData, handleChange , handleSub
                         aria-describedby="image_url_help"
                         />
                     </div>
-                    
+                    {formData.image_url.length >0?
+                    <div>
+                        <label className="block text-gray-700 font-medium mb-2">Current Images</label>
+                        <div className="flex space-x-2">
+                            {formData.image_url.map((url, index) => (
+                                <img key={index} src={`../../../public/product_pictures/${formData.sku}/${url}`} alt={`Inventory Item ${index}`} className="w-20 h-20 object-cover" />
+                            ))}
+                        </div>
+                    </div>:''
+                    }
                     <div>
                         <label htmlFor="sku" className="block text-gray-700 font-medium mb-2">SKU
-                        {validationErrors.name && <span className="text-red-500 ml-2">{validationErrors.sku}</span>}
+                        {validationErrors.sku && <span className="text-red-500 ml-2">{validationErrors.sku}</span>}
                         </label>                        
                         <input
                         type="text"
@@ -70,7 +88,7 @@ export default function CreateInventory_form({formData, handleChange , handleSub
                     </div>
                     <div>
                         <label htmlFor="color" className="block text-gray-700 font-medium mb-2">Color
-                        {validationErrors.name && <span className="text-red-500 ml-2">{validationErrors.color}</span>}
+                        {validationErrors.color && <span className="text-red-500 ml-2">{validationErrors.color}</span>}
                         </label>
                         <input
                         type="text"
@@ -84,7 +102,7 @@ export default function CreateInventory_form({formData, handleChange , handleSub
                     </div>
                     <div>
                         <label htmlFor="sizes" className="block text-gray-700 font-medium mb-2">Size
-                        {validationErrors.name && <span className="text-red-500 ml-2">{validationErrors.sizes}</span>}
+                        {validationErrors.sizes && <span className="text-red-500 ml-2">{validationErrors.sizes}</span>}
                         </label>
                         <input
                         type="text"
@@ -98,7 +116,7 @@ export default function CreateInventory_form({formData, handleChange , handleSub
                     </div>
                     <div>
                         <label htmlFor="prices" className="block text-gray-700 font-medium mb-2">Price
-                        {validationErrors.name && <span className="text-red-500 ml-2">{validationErrors.prices}</span>}
+                        {validationErrors.prices && <span className="text-red-500 ml-2">{validationErrors.prices}</span>}
                         </label>
                         <input
                         type="number"
@@ -112,7 +130,7 @@ export default function CreateInventory_form({formData, handleChange , handleSub
                     </div>
                     <div>
                         <label htmlFor="quantity" className="block text-gray-700 font-medium mb-2">Quantity
-                        {validationErrors.name && <span className="text-red-500 ml-2">{validationErrors.quantity}</span>}
+                        {validationErrors.quantity && <span className="text-red-500 ml-2">{validationErrors.quantity}</span>}
                         </label>
                         <input
                         type="number"
@@ -126,7 +144,7 @@ export default function CreateInventory_form({formData, handleChange , handleSub
                     </div>
                     <div>
                         <label htmlFor="quantity_per_packet" className="block text-gray-700 font-medium mb-2">Quantity Per Packet
-                        {validationErrors.name && <span className="text-red-500 ml-2">{validationErrors.quantity_per_packet}</span>}
+                        {validationErrors.quantity_per_packet && <span className="text-red-500 ml-2">{validationErrors.quantity_per_packet}</span>}
                         </label>
                         <input
                         type="number"
@@ -140,7 +158,7 @@ export default function CreateInventory_form({formData, handleChange , handleSub
                     </div>
                     <div>
                         <label htmlFor="type" className="block text-gray-700 font-medium mb-2">Type
-                        {validationErrors.name && <span className="text-red-500 ml-2">{validationErrors.type}</span>}
+                        {validationErrors.type && <span className="text-red-500 ml-2">{validationErrors.type}</span>}
                         </label>
                         <input
                         type="text"
@@ -155,7 +173,7 @@ export default function CreateInventory_form({formData, handleChange , handleSub
                     <div>
                         <label className="block text-gray-700 font-medium mb-2">
                             Warehouse Location
-                            {validationErrors.name && <span className="text-red-500 ml-2">{validationErrors.warehouse_id}</span>}
+                            {validationErrors.warehouse_id && <span className="text-red-500 ml-2">{validationErrors.warehouse_id}</span>}
                         </label>
                         {warehouses.map((warehouse, index) => (
                             <div key={index} className="flex items-center mb-2">
@@ -185,6 +203,7 @@ export default function CreateInventory_form({formData, handleChange , handleSub
                     </div>
                 </form>
             </div>
+            <SimilarSKU inventory={inventory} formData={formData} />
         </div>
   )
 }

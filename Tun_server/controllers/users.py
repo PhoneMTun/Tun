@@ -105,7 +105,6 @@ def login():
 
     return jsonify({"message": "Log in successful", "token": token}), 200
 
-from flask import request
 
 @app.route('/protected', methods=['GET'])
 def protected_route():

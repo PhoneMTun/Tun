@@ -9,11 +9,28 @@ import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 
 
-const InventoryContent = ({inventory, setInventory, error, isLoading}) => {
+const InventoryContent = ({inventory, setInventory, error, isLoading, setValidationErrors, setFormData}) => {
   const toast = useRef(null);
   const [searchTerm, setSearchTerm]= useState('');
   const [sortOrder, setSortOrder]= useState('newest');
-
+  const resetValidationErrors = () => {
+    setValidationErrors([])
+    setFormData({
+      name: '',
+      sku: '',
+      color: '',
+      sizes:'',
+      prices: '',
+      quantity: '',
+      quantity_per_packet: '',
+      image_url:'',
+      type: '',
+      warehouse_id: '',
+      user_id: '' 
+  })
+    
+  };
+  ;
   const accept = async (itemId) => {
     try {
       const response = await axios.delete(`http://localhost:5000/delete/inventory/${itemId}`);
@@ -42,6 +59,8 @@ const InventoryContent = ({inventory, setInventory, error, isLoading}) => {
       reject
     });
   };
+
+  
   
   
   const handleSearchChange = (e) => {
@@ -85,20 +104,20 @@ const InventoryContent = ({inventory, setInventory, error, isLoading}) => {
     </h1>
 
     <Link to="/home/inventory/create-inventory" className="mb-2 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 transform hover:-translate-y-1 hover:scale-105 hover:shadow-lg">
-    Create an Item
+    <Button onClick={resetValidationErrors} label="Create an Item"/>
     </Link>
     <div className="flex flex-col md:flex-row justify-between items-center mb-4 bg-white p-4 rounded-lg shadow-md">
-    <input
-        type="text"
-        placeholder="Search by SKU or Name"
-        onChange={handleSearchChange}
-        className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition ease-in-out mb-4 md:mb-0"
-    />
-    <select onChange={(e) => handleSortChange(e.target.value)} className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition ease-in-out">
-        <option value="newest">Newest First</option>
-        <option value="oldest">Oldest First</option>
-    </select>
-  </div>
+      <input
+          type="text"
+          placeholder="Search by SKU or Name"
+          onChange={handleSearchChange}
+          className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition ease-in-out mb-4 md:mb-0"
+      />
+      <select onChange={(e) => handleSortChange(e.target.value)} className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition ease-in-out">
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+      </select>
+    </div>
 
       {filteredInventory.length > 0 ? (
         <div className="overflow-x-auto shadow-md rounded-lg">
@@ -145,13 +164,15 @@ const InventoryContent = ({inventory, setInventory, error, isLoading}) => {
                   <td className="px-5 py-5 border-b border-gray-200">{item.warehouse.location}</td>
                   <td className="px-5 py-5 border-b border-gray-200">{item.userdata.first_name}</td>
                   <td className="px-5 py-5 border-b border-gray-200">{formatDate(item.created_at)}</td>
-                  <td className="px-5 py-5 border-b border-gray-200">
-                  <Button 
-                    onClick={(e) => handleEdit(item.id, e)} 
-                    icon="pi pi-pencil" 
-                    label="Edit" 
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out shadow hover:shadow-md mr-2"
-                  />
+                  <td className="px-5 py-5 border-b border-gray-200">                
+                  <Link to={`/home/inventory/edit/${item.id}`} style={{ textDecoration: 'none' }}>
+                    <Button
+                      onClick={resetValidationErrors}
+                      icon="pi pi-pencil" 
+                      label="Edit" 
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out shadow hover:shadow-md mr-2"
+                      />
+                  </Link>
                   <Button 
                       onClick={(e) => handleDelete(item.id, e)} 
                       icon="pi pi-times" 

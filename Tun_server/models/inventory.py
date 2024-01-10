@@ -39,9 +39,9 @@ class Inventory:
         query = """
             UPDATE inventories
             SET sku=%(sku)s, name=%(name)s, color=%(color)s, sizes=%(sizes)s,
-                prices=%(prices)s, quantity=%(quantity)s, %(quantity_per_packet)s, image_url=%(image_url)s,
+                prices=%(prices)s, quantity=%(quantity)s, quantity_per_packet=%(quantity_per_packet)s, image_url=%(image_url)s,
                 type=%(type)s, warehouse_id=%(warehouse_id)s, user_id=%(user_id)s,
-                admin_id=%(admin_id)s, updated_at=NOW()
+                updated_at=NOW()
             WHERE id=%(id)s
         """
         return connectToMySQL(DB).query_db(query, data)
@@ -99,6 +99,60 @@ class Inventory:
 
         return inventories
     
+    @classmethod
+    def get_by_id(cls, id):
+        query = """
+            SELECT 
+            *
+            FROM 
+                inventories
+            JOIN 
+                warehouses ON inventories.warehouse_id = warehouses.id
+            JOIN 
+                users ON inventories.user_id = users.id
+            WHERE 
+                inventories.id = %(id)s;
+        """
+        results = connectToMySQL(DB).query_db(query, {'id': id})
+        if results:
+            result = results[0]
+            warehouse_data = {
+                'id': result['warehouses.id'],
+                'location': result['location'],
+                'level': result['level'],
+                'created_at': result['warehouses.created_at'],
+                'updated_at': result['warehouses.updated_at']
+            }
+            user_data = {
+                'id': result['users.id'],
+                'first_name': result['first_name'],
+                'last_name': result['last_name'],
+                'role': result['role'],
+                'email': result['email'],
+                'password': result['password'],  # Consider omitting password for security reasons
+                'created_at': result['users.created_at'],
+                'updated_at': result['users.updated_at']
+            }
+            inventory_data = {
+                'id': result['id'],
+                'sku': result['sku'],
+                'name': result['name'],
+                'color': result['color'],
+                'sizes': result['sizes'],
+                'prices': result['prices'],
+                'quantity': result['quantity'],
+                'quantity_per_packet': result['quantity_per_packet'],
+                'image_url': result['image_url'],
+                'warehouse': warehouse_data,
+                'userdata': user_data,
+                'type': result['type'],
+                'created_at': result['created_at'],
+                'updated_at': result['updated_at']
+            }
+            return inventory_data
+        else:
+            return None
+
 
     @classmethod
     def delete(cls, inventory_id):
@@ -108,16 +162,21 @@ class Inventory:
             return True 
         except Exception as e:
             print(f"Error deleting inventory: {e}")
-            return False  
+            return False
+    
+    @classmethod
+    def decrement_stock(cls, inventory_id, amount):
+        query = """
+            UPDATE inventories
+            SET quantity = quantity - %(amount)s
+            WHERE id = %(inventory_id)s AND quantity >= %(amount)s;
+        """
+        params = {'inventory_id': inventory_id, 'amount': amount}
+        return connectToMySQL(DB).query_db(query, params)
+
+
 
 
     
-    @classmethod
-    def get_by_id(cls, id):
-        query = "SELECT * FROM inventories WHERE id = %(id)s;"
-        results = connectToMySQL(DB).query_db(query, {'id': id})
-        if results:
-            return cls(results[0])
-        else:
-            return None
         
+
