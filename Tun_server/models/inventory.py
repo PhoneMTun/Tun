@@ -173,10 +173,63 @@ class Inventory:
         """
         params = {'inventory_id': inventory_id, 'amount': amount}
         return connectToMySQL(DB).query_db(query, params)
+    
+    # @classmethod
+    # def search_by_sku(cls, sku):
+    #     # SQL query to find inventory items by SKU
+    #     query = """
+    #         SELECT 
+    #             *
+    #         FROM 
+    #             inventories
+    #         JOIN 
+    #             warehouses ON inventories.warehouse_id = warehouses.id
+    #         JOIN 
+    #             users ON inventories.user_id = users.id
+    #         WHERE
+    #             inventories.sku = %(sku)s;
+    #     """
+    #     params = {'sku': sku}
+    #     results = connectToMySQL(DB).query_db(query, params)
 
+    #     inventories = []
+    #     for result in results:
+    #         warehouse_data = {
+    #             'id': result['warehouses.id'],
+    #             'location': result['location'],
+    #             'level': result['level'],
+    #             'created_at': result['warehouses.created_at'],
+    #             'updated_at': result['warehouses.updated_at']
+    #         }
 
-
-
+    #         user_data = {
+    #             'id': result['users.id'],
+    #             'first_name': result['first_name'],
+    #             'last_name': result['last_name'],
+    #             'role': result['role'],
+    #             'email': result['email'],
+    #             'password': result['password'], 
+    #             'created_at': result['users.created_at'],
+    #             'updated_at': result['users.updated_at']
+    #         }
+    #         inventory_data = {
+    #             'id': result['id'],
+    #             'sku': result['sku'],
+    #             'name': result['name'],
+    #             'color': result['color'],
+    #             'sizes': result['sizes'],
+    #             'prices': result['prices'],
+    #             'quantity': result['quantity'],
+    #             'quantity_per_packet': result['quantity_per_packet'],
+    #             'image_url': result['image_url'],
+    #             'warehouse': warehouse_data,
+    #             'user': user_data,
+    #             'type': result['type'],
+    #             'created_at': result['created_at'],
+    #             'updated_at': result['updated_at']
+    #         }
+    #         inventories.append(inventory_data)
+    #     return inventories
     
         
 

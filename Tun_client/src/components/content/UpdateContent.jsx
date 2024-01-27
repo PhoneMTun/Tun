@@ -51,26 +51,22 @@ export default function UpdateContent({fetchInventory, inventory}) {
         if (!formData.sku) {
             errors.sku = 'SKU is required';
         }
-      
         if (!formData.name.trim()) {
             errors.name = 'Item name is required';
         }
         if (!formData.color) {
             errors.color = 'Color is required';
         }
-      
         if (!formData.sizes || formData.sizes <= 0) {
             errors.sizes = 'Size is required and must be a positive number';
         }
-      
         if (!formData.prices || isNaN(formData.prices) || formData.prices <= 0) {
             errors.prices = 'Valid price is required and must be a positive number';
-        }
-      
+        }  
         if (!formData.quantity || isNaN(formData.quantity) || formData.quantity <= 0) {
             errors.quantity = 'Valid quantity is required and must be a positive number';
         }
-      
+
         if (!formData.quantity_per_packet || isNaN(formData.quantity_per_packet) || formData.quantity_per_packet <= 0) {
             errors.quantity_per_packet = 'Valid quantity per packet is required and must be a positive number';
         }
@@ -88,21 +84,16 @@ export default function UpdateContent({fetchInventory, inventory}) {
                 errors.image_url = 'Pick .png, .jpg or .jpeg file types';
         }
     }
-        // console.log(typeof formData.image_url[0]);
-        // if(typeof formData.image_url==='string') {
-        // const allowedTypes = ['.png', '.jpg', '.jpeg'];
-        // if (!allowedTypes.includes(formData.image_url.type)) {
-        //         errors.image_url = 'Pick a proper image type'
-        // }
+
         
         
         setValidationErrors(errors);
         return Object.keys(errors).length === 0;
-      };
+};
 
     useEffect(() => {
         fetchthisInventory();
-    }, [id]); // Dependency array ensures useEffect runs only when id changes
+    }, [id]); 
     
     const handleChange = (e) => {
         const { name, value, files, type } = e.target;

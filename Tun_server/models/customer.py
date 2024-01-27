@@ -32,5 +32,15 @@ class Customer:
             return cls(results[0])
         else:
             return None
+    @classmethod
+    def update(cls, customer_id, data):
+        query = """
+            UPDATE customers
+            SET name=%(name)s, location=%(location)s, phoneno=%(phoneno)s, updated_at=NOW()
+            WHERE id=%(id)s;
+        """
+        data['id'] = customer_id
+        return  connectToMySQL(DB).query_db(query, data)
+         
     
 

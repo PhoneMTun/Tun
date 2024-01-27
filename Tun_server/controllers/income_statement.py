@@ -1,6 +1,7 @@
 from flask import jsonify, request
 from Tun_server.models.income_statement import Income_Statement
 from Tun_server import app
+from Tun_server.models.pointofsale import PointofSale
 
 @app.route('/income/monthly', methods=['GET'])
 def get_monthly_income():
@@ -39,16 +40,26 @@ def create_income_statement():
         return jsonify({'error': 'Failed to create income statement'}), 500
 
 
-@app.route('/income/<int:income_id>', methods=['PATCH'])
-def update_income_statement(income_id):
-    total = request.form.get('total', type=float)
+@app.route('/update_income_statements', methods=['POST'])
+def update_income_statements():
+    # Fetching point of sale data
+    pos_data = PointofSale.get_all() # This returns a list of dictionaries
 
-    if total is None:
-        return jsonify({'error': 'Total is required'}), 400
+    # Aggregate totals by income_id
+    totals_by_income_id = {}
+    for entry in pos_data:
 
-    # Assuming you have an update method in your Income_Statement class
-    updated = Income_Statement.update({'id': income_id, 'total': total})
-    if updated:
-        return jsonify({'message': 'Income statement updated successfully'}), 200
-    else:
-        return jsonify({'error': 'Failed to update income statement'}), 500
+        income_id = entry['income_statement_id']  
+        total = entry['total']
+        if income_id in totals_by_income_id:
+            totals_by_income_id[income_id] += total
+        else:
+            totals_by_income_id[income_id] = total
+
+    # Update income statements
+    for income_id, total in totals_by_income_id.items():
+        Income_Statement.update({'id': income_id, 'total': total})
+
+    return jsonify({'message': 'Income statements updated successfully'}), 200
+
+

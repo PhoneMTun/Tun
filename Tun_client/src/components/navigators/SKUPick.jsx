@@ -1,6 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 export default function SKUPick({ inventory, onItemSelect }) {
+    const getRemainingQuantity = (item) => {
+        const cartItem = formData.items.find(cartItem => cartItem.id === item.id);
+        return cartItem ? item.quantity - cartItem.quantity : item.quantity;
+};
     return (
         <div className="w-full  p-4 bg-white rounded-lg shadow-md overflow-y-auto max-h-screen">
             <h3 className="text-xl font-bold text-gray-800 mb-6">Pick SKU Items</h3>
@@ -19,7 +23,7 @@ export default function SKUPick({ inventory, onItemSelect }) {
                                 <p className="text-gray-900 font-semibold">{item.name}</p>
                                 <p className="text-gray-500 text-sm">SKU: {item.sku}</p>
                                 <p className="text-gray-500 text-sm">Price: {item.prices}</p>
-                                
+                                <p className="text-gray-500 text-sm">Quantity: {item.quantity}</p>
                             </div>
                             
                             <button onClick={() => onItemSelect(item)} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">

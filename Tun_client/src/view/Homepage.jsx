@@ -9,9 +9,15 @@ import InventoryContent from '../components/content/InventoryContent';
 import CreateInventoryContent from '../components/content/CreateInventoryContent';
 import UpdateContent from '../components/content/UpdateContent';
 import SaleContent from '../components/content/SaleContent';
+import AllReceiptsPage from '../components/Reports/AllReceiptsPage';
+import Customers from '../components/content/Customers';
+import Wearhouses from '../components/content/Wearhouses';
 import '../App.css';
+import Chat from '../components/chat/Chat';
+import DisplayEachInventory from '../components/content/DisplayEachInventory';
 
 const Homepage = () => {
+  const [customers, setCustomers] = useState([]);
   const [inventory, setInventory] = useState([]);
   const [user, setUser] = useState({});
   const [validationErrors, setValidationErrors] = useState([]);
@@ -28,7 +34,8 @@ const Homepage = () => {
     warehouse_id: '',
     user_id: '' 
 });
-console.log(validationErrors)
+
+console.log(user)
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -95,57 +102,75 @@ const fetchInventory = async () => {
     setError('Error fetching inventory: ' + error);
   }
 };
+const fetchcustomers = async () => {
+  try{
+    const respnse = await axios.get('http://localhost:5000/customers');
+    setCustomers(respnse.data);
+  }catch (error) {
+    setError('Error fetching customers: ' + error);
+}
+}
+
   useEffect(() => {
     console.log('hello');
     fetchInventory();
-    const fetchUser = () => {
+    fetchcustomers();
+    const fetchUser = async () => {
       const token = localStorage.getItem('token');
-      console.log(token);
-
+      console.log("Token:", token);
       if (token) {
         try {
           const decodedToken = jwtDecode(token);
-          axios(`http://localhost:5000/user/${decodedToken.user_id}`, {
-            method: 'GET',
+          const response = await axios.get(`http://localhost:5000/user/${decodedToken.user_id}`, {
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}`,
             },
-          })
-            .then(response => response.data)
-            .then(data => {
-              console.log(data);
-              setUser(data);
-              setFormData(prevFormData => ({
-                ...prevFormData,
-                user_id: data.id
-            })
-            );
-            })
-            .catch(error => console.error('Error:', error));
+          });
+    
+          console.log("Fetched user data:", response.data);
+          if (!response.data.id) {
+            // If user.id is missing, log out the user
+            localStorage.removeItem('token');
+            localStorage.removeItem('user_id');
+            navigate('/login');
+          } else {
+            setUser(response.data);
+            setFormData(prevFormData => ({
+              ...prevFormData,
+              user_id: response.data.id
+            }));
+          }
         } catch (error) {
-          console.error('Invalid token:', error);
+          console.error('Error:', error);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user_id');
+          navigate('/login');
         }
       }
     };
+    
     fetchUser();
     setIsLoading(false);
   }, []);
 
-  
 
   return (
     <div className="flex">
-      <Sidebar />
+      <Sidebar user={user}/>
       <div className="ml-60 flex-grow p-4 flex justify-center items-center ">
         <Routes>
-          <Route path="/dashboard" element={<DashboardContent user={user} />} />
-          <Route path="/inventory" element={<InventoryContent inventory={inventory} setInventory={setInventory} error={error} isLoading= {isLoading} setValidationErrors={setValidationErrors} setFormData={setFormData}/>} />
+          <Route path="/dashboard" element={<DashboardContent user={user} inventory={inventory}/>} />
+          <Route path="/inventory" element={<InventoryContent user={user} inventory={inventory} setInventory={setInventory} error={error} isLoading= {isLoading} setValidationErrors={setValidationErrors} setFormData={setFormData}/>} />
           <Route path="/inventory/create-inventory" element={<CreateInventoryContent formData={formData}  handleChange={handleChange}   fetchInventory={fetchInventory} validateForm={validateForm} validationErrors={validationErrors} inventory={inventory}/>}/>
           <Route path="/inventory/edit/:id" element={<UpdateContent fetchInventory={fetchInventory} inventory={inventory}/>}/>
-          <Route path="/sale" element={<SaleContent inventory={inventory} user={user}/>}/>
+          <Route path="/sale" element={<SaleContent inventory={inventory} user={user} customers={customers}/>}/>
+          <Route path="/receipts" element={<AllReceiptsPage />}/>
+          <Route path="/customers" element={<Customers />}/>
+          <Route path="/warehouses" element={<Wearhouses />}/>
         </Routes>
       </div>
+      <Chat user={user}/>
     </div>
     
   );

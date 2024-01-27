@@ -21,13 +21,13 @@ class Income_Statement:
 
     @classmethod
     def get_all(cls):
-        query = "SELECT * FROM income_statements"
+        query = "SELECT * FROM income_statement"
         results = connectToMySQL(DB).query_db(query)
         return [cls(result) for result in results]
 
     @classmethod
     def get_by_id(cls, id):
-        query = "SELECT * FROM income_statements WHERE id = %(id)s"
+        query = "SELECT * FROM income_statement WHERE id = %(id)s"
         results = connectToMySQL(DB).query_db(query, {'id': id})
         if results:
             return cls(results[0])
@@ -55,8 +55,9 @@ class Income_Statement:
     @classmethod
     def update(cls, data):
         query = """
-            UPDATE income_statements
+            UPDATE income_statement
             SET total = %(total)s, updated_at = NOW()
             WHERE id = %(id)s;
         """
         return connectToMySQL(DB).query_db(query, data)
+    

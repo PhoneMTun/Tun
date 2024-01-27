@@ -7,14 +7,14 @@ export default function Registerpage() {
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
+        role: 'user',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirm_password: ''
     });
     
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    // const [successful, setSuccessful] = useState(false);
 
     const handleInputChange = (e) => {
         setFormData({
@@ -25,7 +25,7 @@ export default function Registerpage() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (formData.password !== formData.confirmPassword) {
+        if (formData.password !== formData.confirm_password) {
             setError('Passwords do not match.');
             return;
         }

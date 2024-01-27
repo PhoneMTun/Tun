@@ -15,7 +15,7 @@ export default function SimilarSKU({ inventory, formData }) {
                         const firstImageUrl = imageUrls[0];
 
                         return (
-                            <div key={index} className="mb-5 m-2 p-4 bg-white w-full rounded-lg shadow hover:shadow-lg transform hover:scale-105 transition duration-300 flex items-center  space-x-4">
+                            <div key={index} className="mb-5 m-2 p-4 bg-white w-full  rounded-lg shadow hover:shadow-lg transform hover:scale-105 transition duration-300 flex items-center  space-x-4">
                                 <img src={firstImageUrl} alt={`${item.name}`} className="w-16 h-16 object-cover rounded-full border border-gray-200" />
                                 <div className="flex-grow">
                                     <p className="text-gray-900 font-semibold">{item.name}</p>

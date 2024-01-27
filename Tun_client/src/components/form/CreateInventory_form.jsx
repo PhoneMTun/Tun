@@ -143,7 +143,7 @@ export default function CreateInventory_form({formData, handleChange , handleSub
                         />
                     </div>
                     <div>
-                        <label htmlFor="quantity_per_packet" className="block text-gray-700 font-medium mb-2">Quantity Per Packet
+                        <label htmlFor="quantity_per_packet" className="block text-gray-700 font-medium mb-2">Quantity Per Pack
                         {validationErrors.quantity_per_packet && <span className="text-red-500 ml-2">{validationErrors.quantity_per_packet}</span>}
                         </label>
                         <input
@@ -157,7 +157,7 @@ export default function CreateInventory_form({formData, handleChange , handleSub
                         />
                     </div>
                     <div>
-                        <label htmlFor="type" className="block text-gray-700 font-medium mb-2">Type
+                        <label htmlFor="type" className="block text-gray-700 font-medium mb-2">Made In
                         {validationErrors.type && <span className="text-red-500 ml-2">{validationErrors.type}</span>}
                         </label>
                         <input
@@ -198,12 +198,13 @@ export default function CreateInventory_form({formData, handleChange , handleSub
                         type="submit"
                         className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg focus:outline-none focus:ring focus:ring-indigo-400"
                         >
-                        Create Item
+                        {location.pathname=='/home/inventory/create-inventory'?
+                        'Create Item':'Update Item'}
                         </button>
                     </div>
                 </form>
             </div>
             <SimilarSKU inventory={inventory} formData={formData} />
         </div>
-  )
+)
 }

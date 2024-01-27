@@ -17,3 +17,11 @@ def create_warehouse():
         return jsonify({'message': 'Warehouse created successfully', 'warehouse_id': warehouse_id})
     else:
         return jsonify({'error': 'Warehouse creation failed!'})
+
+@app.route('/update/warehouse/<int:warehouse_id>', methods=['PATCH'])
+def update_warehouse(warehouse_id):
+    data = request.json
+    if not data:
+        return jsonify({'error': 'No data provided for update'}), 400
+    Warehouse.update(warehouse_id, data)
+    return jsonify({'message': 'Warehouse updated successfully'})

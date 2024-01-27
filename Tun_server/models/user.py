@@ -16,7 +16,7 @@ class User:
 
     @classmethod
     def save(cls,data):
-        query = "insert into users (first_name, last_name, role, email, password) values(%(first_name)s, %(last_name)s,%(email)s,%(role)s, %(password)s);"
+        query = "insert into users (first_name, last_name, role, email, password) values(%(first_name)s, %(last_name)s,%(role)s,%(email)s, %(password)s);"
         results= connectToMySQL(DB).query_db(query,data)
         return results
     
@@ -50,12 +50,12 @@ class User:
         return users
     
     
-    # @classmethod
-    # def email_exists(cls, email):
-    #     query = "SELECT * FROM users WHERE email = %(email)s;"
-    #     data = {'email': email}
-    #     results = connectToMySQL(DB).query_db(query, data)
-    #     return results
+    @classmethod
+    def email_exists(cls, email):
+        query = "SELECT * FROM users WHERE email = %(email)s;"
+        data = {'email': email}
+        results = connectToMySQL(DB).query_db(query, data)
+        return results
     
     @classmethod
     def get_by_email(cls,email):
@@ -80,35 +80,58 @@ class User:
     
 
     @staticmethod
-    def validate_user(user, update= False):
+    def validate_user(user):
         errors = {}
         is_valid = True
 
+        # First Name Length Check
         if len(user['first_name']) < 2:
             errors['first_name'] = "First Name should be at least 2 characters."
             is_valid = False
 
+        # Last Name Length Check
         if len(user['last_name']) < 2:
             errors['last_name'] = "Last Name should be at least 2 characters."
             is_valid = False
 
-        if not update or ('new_password' in user and 'confirm_password' in user):
-            if user.get('new_password') != user.get('confirm_password'):
-                errors['password'] = "Passwords do not match!"
-                is_valid = False
+        # Password Length Check
+        if len(user['password']) < 8:
+            errors['last_name'] = "Password must be more than 8 characters."
+            is_valid = False
 
-        if not update:
-            if User.email_exists(user['email']):
+        # Password Match Check
+        if user.get('password') != user.get('confirm_password'):
+            errors['password'] = "Passwords do not match!"
+            is_valid = False
+            # Email Existence Check
+        if User.email_exists(user['email']):
                 errors['email'] = "Email already exists."
                 is_valid = False
-
-            elif not re.match(r"[^@]+@[^@]+\.[^@]+", user['email']):
+            # Email Format Check
+        elif not re.match(r"[^@]+@[^@]+\.[^@]+", user['email']):
                 errors['email'] = "Invalid email format."
                 is_valid = False
-
 
         if is_valid:
             return True, None
         else:
             return False, errors
+        
+    @staticmethod
+    def validate_login(data):
+        errors = {}
+        is_valid = True
+
+        # Check if email is provided and valid
+        if 'email' not in data or not re.match(r"[^@]+@[^@]+\.[^@]+", data['email']):
+            errors['email'] = "Invalid or missing email."
+            is_valid = False
+
+        # Check if password is provided
+        if 'password' not in data or not data['password']:
+            errors['password'] = "Password is required."
+            is_valid = False
+
+        return is_valid, errors
+
 

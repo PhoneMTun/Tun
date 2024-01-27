@@ -18,6 +18,11 @@ def get_all_inventory():
 def get_inventiory_by_id(inventory_id):
     return jsonify(Inventory.get_by_id(inventory_id))
 
+
+# @app.route('/inventory/<string:sku>', methods=['GET'])
+# def get_inventiory_by_sku(sku):
+#     return jsonify(Inventory.search_by_sku(sku))
+
 @app.route('/create/inventory', methods=['POST'])
 def create_inventory():
     data = {
@@ -108,18 +113,15 @@ def update_inventory(inventory_id):
 
 
 
-@app.route('/inventory/sku/<string:sku>', methods=['GET'])
-def get_inventory_by_sku(sku):
-    inventory = Inventory.get_by_sku(sku)
-    if inventory:
-        return jsonify(inventory.__dict__)
-    else:
-        return jsonify({"message": "Inventory not found"}), 404
+# @app.route('/inventory/sku/<string:sku>', methods=['GET'])
+# def get_inventory_by_sku(sku):
+#     inventory = Inventory.get_by_sku(sku)
+#     if inventory:
+#         return jsonify(inventory.__dict__)
+#     else:
+#         return jsonify({"message": "Inventory not found"}), 404
     
-# @app.route('/delete/inventory/<int:inventory_id>', methods=['DELETE'])
-# def delete_inventory(inventory_id):
-#     print("Deleting:>>>", inventory_id)
-#     return Inventory.delete(inventory_id)
+
 
 @app.route('/delete/inventory/<int:inventory_id>', methods=['DELETE'])
 def delete_inventory(inventory_id):

@@ -31,3 +31,15 @@ class Warehouse:
             return cls(results[0])
         else:
             return None
+        
+    @classmethod
+    def update(cls, id, data):
+        query = """
+            UPDATE warehouses 
+            SET location = IFNULL(%(location)s, location), 
+                level = IFNULL(%(level)s, level), 
+                updated_at = NOW()
+            WHERE id = %(id)s;
+        """
+        data['id'] = id
+        return connectToMySQL(DB).query_db(query, data)
