@@ -28,7 +28,6 @@ const DashboardContent = ({ user , inventory}) => {
       <h1 className="text-4xl font-bold mb-4 text-blue-900 uppercase">
         Hello, {user && user.role} - {user && user.first_name}
       </h1>
-
         <h3 className="text-xl font-semibold mb-2 text-gray-700">Dashboard Overview</h3>
         <p className="text-gray-600">Welcome to your personalized dashboard. Here is the overview of business performace.</p>
       </div>

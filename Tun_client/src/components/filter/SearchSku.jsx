@@ -6,7 +6,7 @@ export default function SearchBar({ onSearch }) {
     const handleSearchChange = (e) => {
         const newSearchTerm = e.target.value.toLowerCase();
         setSearchTerm(newSearchTerm);
-        onSearch(newSearchTerm); // Call the provided search callback
+        onSearch(newSearchTerm);
     };
 
     return (

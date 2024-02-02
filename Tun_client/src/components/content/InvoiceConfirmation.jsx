@@ -79,7 +79,7 @@ export default function InvoiceConfirmation() {
         setShowPopup(false);
         window.open(`/view-receipt/${receiptId}`, '_blank');
         handleClosePopup();
-      };
+};
 
     const handleConfirm =  () => {
         postRecipt();

@@ -70,7 +70,6 @@ const Customers = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4 text-center">Customers</h1>
       
-      {/* Create Customer Form */}
       <div className="mb-4">
         <h2 className="text-2xl font-bold mb-3">Create Customer</h2>
         <form onSubmit={handleSubmit} className="flex gap-3 mb-4">
@@ -197,5 +196,3 @@ const Customers = () => {
 };
 
 export default Customers;
-
-               

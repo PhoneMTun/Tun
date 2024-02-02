@@ -16,12 +16,8 @@ export default function CurrencyConvert() {
 
   const convertCurrency = (e) => {
     e.preventDefault();
-
     const { fromCurrency, toCurrency, amount } = formData;
-
-    // Replace with your actual API endpoint
     const apiUrl = `https://v6.exchangerate-api.com/v6/8e60f6f534a895d508c01bf5/latest/${fromCurrency}`;
-
     axios.get(apiUrl)
       .then((response) => {
         const exchangeRates = response.data.conversion_rates;
