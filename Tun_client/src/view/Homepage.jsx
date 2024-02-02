@@ -32,7 +32,7 @@ const Homepage = () => {
     image_url:'',
     type: '',
     warehouse_id: '',
-    user_id: '' 
+    user_id: user.id 
 });
 
 console.log(user)
