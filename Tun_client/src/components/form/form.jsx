@@ -6,6 +6,7 @@ const AccountCreationForm = ({ formData, handleInputChange, handleSubmit, error 
     const handleCancel = () => {
         navigate('/');
     }
+    
     return (
 
             <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-900">

@@ -32,7 +32,7 @@ const Homepage = () => {
     image_url:'',
     type: '',
     warehouse_id: '',
-    user_id: user.id 
+    user_id: ''
 });
 
 console.log(user)
@@ -128,7 +128,7 @@ const fetchcustomers = async () => {
             },
           });
     
-          console.log("Fetched user data:", response.data);
+          // console.log("Fetched user data:", response.data);
           if (!response.data.id) {
             // If user.id is missing, log out the user
             localStorage.removeItem('token');
@@ -136,10 +136,6 @@ const fetchcustomers = async () => {
             navigate('/login');
           } else {
             setUser(response.data);
-            setFormData(prevFormData => ({
-              ...prevFormData,
-              user_id: response.data.id
-            }));
           }
         } catch (error) {
           console.error('Error:', error);
@@ -162,7 +158,7 @@ const fetchcustomers = async () => {
         <Routes>
           <Route path="/dashboard" element={<DashboardContent user={user} inventory={inventory}/>} />
           <Route path="/inventory" element={<InventoryContent user={user} inventory={inventory} setInventory={setInventory} error={error} isLoading= {isLoading} setValidationErrors={setValidationErrors} setFormData={setFormData}/>} />
-          <Route path="/inventory/create-inventory" element={<CreateInventoryContent formData={formData}  handleChange={handleChange}   fetchInventory={fetchInventory} validateForm={validateForm} validationErrors={validationErrors} inventory={inventory}/>}/>
+          <Route path="/inventory/create-inventory" element={<CreateInventoryContent user={user} formData={formData} setFormData={setFormData}  handleChange={handleChange}   fetchInventory={fetchInventory} validateForm={validateForm} validationErrors={validationErrors} inventory={inventory}/>}/>
           <Route path="/inventory/edit/:id" element={<UpdateContent fetchInventory={fetchInventory} inventory={inventory}/>}/>
           <Route path="/sale" element={<SaleContent inventory={inventory} user={user} customers={customers}/>}/>
           <Route path="/receipts" element={<AllReceiptsPage />}/>

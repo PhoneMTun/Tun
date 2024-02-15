@@ -3,13 +3,14 @@ import {useLocation} from 'react-router-dom'
 import axios from 'axios'
 import SimilarSKU from '../navigators/SimilarSKU'
 
-export default function CreateInventory_form({formData, handleChange , handleSubmit, validationErrors  , inventory}) {
+export default function CreateInventory_form({user, formData, handleChange , handleSubmit, validationErrors  , inventory}) {
     const [warehouses, setWearehouses] = useState([])
     const location = useLocation();
     // console.log(location.pathname)
     // console.log(formData)
-    console.log(validationErrors)
-    console.log(inventory)
+    // console.log(validationErrors)
+    // console.log(inventory)
+    // console.log('this is the user' ,user.id)
     
     useEffect(() => {
         const fetchWarehouses = async () => {
@@ -192,6 +193,7 @@ export default function CreateInventory_form({formData, handleChange , handleSub
                             </div>
                         ))}
                     </div>
+
                     
                     <div>
                         <button

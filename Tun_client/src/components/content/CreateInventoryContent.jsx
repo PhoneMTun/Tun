@@ -2,9 +2,10 @@ import React, {useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Ensure axios is imported
 import CreateInventory_form from '../form/CreateInventory_form';
-export default function CreateInventoryContent({ formData, handleChange , fetchInventory, validateForm, validationErrors, inventory}) {
+export default function CreateInventoryContent({ user, formData, handleChange , setFormData,fetchInventory, validateForm, validationErrors, inventory}) {
     const navigate = useNavigate();
     
+
     const handleSubmit = async (e) => {
         console.log('tring to submit');
         e.preventDefault();
@@ -37,7 +38,17 @@ export default function CreateInventoryContent({ formData, handleChange , fetchI
             console.error('Error creating inventory:', error);
         }
     };
+
+    useEffect(() => {
+        if (user.id) {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            user_id: user.id, 
+        }));
+        }
+    }, [user.id]);
+    
     return (
-        <CreateInventory_form formData={formData} handleChange={handleChange} handleSubmit={handleSubmit} validationErrors={validationErrors} inventory={inventory}/>
+        <CreateInventory_form user = {user} formData={formData} handleChange={handleChange} handleSubmit={handleSubmit} validationErrors={validationErrors} inventory={inventory}/>
     );
 }    
